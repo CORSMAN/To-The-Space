@@ -10,16 +10,20 @@ public class SpaceShips : MonoBehaviour
     protected int fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
     protected int motorTemperature;                         //Con esto controlaremos la temperatura del motor
     protected bool canRefuel;                               //Bool que nos servira para saber cuando puede recargar combustible
+    protected bool isFlying;
 
     /// <summary>
     /// Metodo que nos ayudara a saber cuando la nave este volando
     /// y de esta manera controlaremos el repostaje y la cantidad de combustible
     /// </summary>
-    protected void IsFlying()
+    protected void Fly()
     {
-        Debug.Log("Volando");
-        canRefuel = false;                                  //Lo volvemos falso
-        fuel -= fuel * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
+        if (isFlying)
+        {
+            Debug.Log("Volando");
+            canRefuel = false;                                  //Lo volvemos falso
+            fuel -= fuel * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
+        }
     }
 
     /// <summary>
