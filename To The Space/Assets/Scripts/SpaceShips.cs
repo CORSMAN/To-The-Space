@@ -4,58 +4,47 @@ using UnityEngine;
 
 public class SpaceShips : MonoBehaviour
 {
-    protected GameObject mainEngine;
-    protected GameObject stabilizers;
-    protected GameObject compartments;
-    protected GameObject fuelTank;
-    protected GameObject hatchCrew;
-    protected GameObject thermalProtectionTiles;
-    protected GameObject booth;
-    protected float fuel;
-    protected float maxFuel;
-    protected int fuselageIntegrity;
-    protected int motorTemperature;
-    protected bool canRefuel = false;
+    protected GameObject ship;                              //GameObject que nos servira para el sprite de la nave
+    protected float fuel;                                   //Combustible actual    
+    protected float maxFuel;                                //Combustible maximo
+    protected int fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
+    protected int motorTemperature;                         //Con esto controlaremos la temperatura del motor
+    protected bool canRefuel;                               //Bool que nos servira para saber cuando puede recargar combustible
 
+    /// <summary>
+    /// Metodo que nos ayudara a saber cuando la nave este volando
+    /// y de esta manera controlaremos el repostaje y la cantidad de combustible
+    /// </summary>
     protected void IsFlying()
     {
-        canRefuel = false;
-        fuel -= fuel * Time.deltaTime;
+        Debug.Log("Volando");
+        canRefuel = false;                                  //Lo volvemos falso
+        fuel -= fuel * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
     }
 
+    /// <summary>
+    /// Metodo que se encarga de hacer el repostaje
+    /// </summary>
     protected void IsRefueling()
     {
-        if (canRefuel && fuel < maxFuel)
+        if (canRefuel && fuel < maxFuel)                    //Si canrefuel es verdadero y el combustible es menor que el maximo, repostamos
         {
-                fuel += fuel * Time.deltaTime;
+                fuel += fuel * Time.deltaTime;              //Vamos incrementando la cantidad de combustible con el tiempo
         }
     }
 
     protected void IsLanding()
     {
-
+        //comienza animacion de cohetes
     }
 
+    /// <summary>
+    /// Metodo que se encarga de destruir la nave cuando el jugador se queda sin integridad(HP)
+    /// </summary>
     protected void IsDead()
     {
-        Destroy(gameObject);
+        Destroy(gameObject);                                //Destruimos el gameobject
         //reproducir animacion de explosion
-    }
-
-    protected void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.tag == "Checkpoint")
-        {
-
-        }
-    }
-
-    protected void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "Aliado")
-        {
-            canRefuel = true;
-        }
     }
 
 }
