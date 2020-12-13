@@ -8,9 +8,18 @@ public class Spacecraft : SpaceShips
     public float gravity;                                                        //Flotante paara aplicar gravedad al momento de volar
     float currentGravity;                                                        //Flotante para controlar la gravedad actual
     float tempGravity = 0;                                                       //Flotante para convertir la gravedad 0
+    
 
     void Start()
     {
+        fuel = 200;
+        maxFuel = fuel;
+        fuselageIntegrity = 300;
+        fuselageMaxIntegrity = fuselageIntegrity;
+        barFuselage.SetQuantity(fuselageIntegrity);
+        barFuselage.SetMaxQuantity(fuselageMaxIntegrity);
+        barFuel.SetMaxQuantity(maxFuel);
+        barFuel.SetQuantity(fuel);
         currentGravity = tempGravity;
     }
     
