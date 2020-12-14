@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class SpaceShips : MonoBehaviour
 {
-    protected GameObject ship;                              //GameObject que nos servira para el sprite de la nave
-    protected float fuel;                             //Combustible actual    
-    protected float maxFuel;                          //Combustible maximo
-    protected int fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
-    protected int fuselageMaxIntegrity;                     //Integridad maxima
-    protected int motorTemperature;                         //Con esto controlaremos la temperatura del motor
+    //[SerializeField] protected GameObject ship;                              //GameObject que nos servira para el sprite de la nave
+    [SerializeField] protected float fuel;                             //Combustible actual    
+    [SerializeField] protected float maxFuel;                          //Combustible maximo
+    [SerializeField] protected int fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
+    [SerializeField] protected int fuselageMaxIntegrity;                     //Integridad maxima
+    [SerializeField] protected int motorTemperature;                         //Con esto controlaremos la temperatura del motor
     protected bool canRefuel;                               //Bool que nos servira para saber cuando puede recargar combustible
     protected bool isFlying;                                //Bool que nos servira para saber cuando esta volando
     protected bool canPressR;                               //Bool que nos servira para saber cuando se puede presionar la tecla R
     protected bool consumingFuel = false;                           //bool que nos servira para detectar en que momento se esta consumiendo combustible
+    protected float currentGravity;                                                        //Flotante para controlar la gravedad actual
+    protected float tempGravity = 0;                                                       //Flotante para convertir la gravedad 0
+
+    [SerializeField] protected float speed = 10;                                                          //Flotante para controlar la velocidad
+    [SerializeField] protected float gravity = 2;                                                        //Flotante paara aplicar gravedad al momento de volar
     [SerializeField] protected Bars barFuel;
     [SerializeField] protected Bars barFuselage;
 
