@@ -1,27 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemies : MonoBehaviour
 {
+    //Variables para guardar datos de los enemigos al cargar y guardar partidas
+    //public bool isDead;
+    //public float enemyPositionX;
+    //public float enemyPositionY;
+
     public Transform player;
-    public Transform instancePoint;//Transofrm que nos servira para instanciar la bala
-    public GameObject bullet;//Gameobject para la bala
-    [SerializeField] private float _stopDistance;//Distancia ala que se detendra
-    [SerializeField] protected float speed = 10;
+    public Transform instancePoint;//Transform que nos servira para instanciar la bala
     private Rigidbody2D _rb;
-    private float _time;//Flotante para controlar el tiempo de disparo
+    public Text myName;
+    public Text myNum;
+    public float fireRate;//Flotante para controlar el tiempo de disparo
+    public float amountMissiles;
+    public EnemiesSO enemySO;
+    public static Enemies enemies;
+    private float _time = 0;//Flotante para controlar el tiempo y saber cuando disparar
+
     // Start is called before the first frame update
     void Start()
     {
         _rb = this.GetComponent<Rigidbody2D>();
+        myName.text = enemySO.enemyName;
+        myNum.text = enemySO.enemyNum;
+        GetComponent<SpriteRenderer>().color = enemySO.enemyColor;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Follow();
-        Shooting();
+        //enemyPositionX = transform.position.x;
+        //enemyPositionY = transform.position.y;
+        
+            Follow();
+            Shooting();
     }
 
     //Metodo para comenzar a seguir y ver al jugador
@@ -29,13 +45,13 @@ public class Enemies : MonoBehaviour
     {
         if (player != null)
         {
-            if (Vector2.Distance(transform.position, player.position) > _stopDistance)
+            if (Vector2.Distance(transform.position, player.position) > enemySO.stopDistance)
             {
-                transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, player.position, enemySO.speed * Time.deltaTime);
             }
-            if (Vector2.Distance(transform.position, player.position) < _stopDistance)
+            if (Vector2.Distance(transform.position, player.position) < enemySO.stopDistance)
             {
-                transform.position = Vector2.MoveTowards(transform.position, player.position, -speed * Time.deltaTime);
+                transform.position = Vector2.MoveTowards(transform.position, player.position, -enemySO.speed * Time.deltaTime);
             }
             Vector3 direction = player.position - transform.position;//Obtenemos la distancia
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;//Obtenemos el angulo entre Y y X y lo convertimos en grados 
@@ -47,11 +63,11 @@ public class Enemies : MonoBehaviour
     void Shooting()
     {
         _time += Time.deltaTime;
-        if(_time >= 2)
+        if(_time >= fireRate  && amountMissiles > 0)
         {
-            Instantiate(bullet, instancePoint.position, Quaternion.identity);
+            Instantiate(enemySO.bullet, instancePoint.position, Quaternion.identity);
             _time = 0;
-                
+            amountMissiles = amountMissiles - 1;    
         }
     }
 }

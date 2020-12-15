@@ -8,7 +8,7 @@ public class Bars : MonoBehaviour
 
     public Slider slider;//Variable para controlar el slider
     public Gradient gradient;//Variable para controlar el gradient
-    public Image fill;//Variable para poder emplear los "efectos" del gradietn ala imagen
+    public Image fill;//Variable para poder emplear los "efectos" del gradient a la imagen
     public Image icon;
     public float transparency;
 
@@ -68,7 +68,7 @@ public class Bars : MonoBehaviour
             if(transparency < 1f)
             {
                 transparency += Time.deltaTime;
-                icon.color = new Color(icon.color.r, icon.color.r, icon.color.b, transparency);
+                icon.color = new Color(icon.color.r, icon.color.g, icon.color.b, transparency);
             }
         }
 
@@ -93,6 +93,6 @@ public class Bars : MonoBehaviour
     public void SetQuantity(float quantity)
     {
         slider.value = quantity;
-        fill.color = gradient.Evaluate(slider.normalizedValue);//Como nuestra cantidad mazima puede variar y el gradient solo funcion de 0-1 , al normalizarlo "cambiamos" los valores a 0-1
+        fill.color = gradient.Evaluate(slider.normalizedValue);//Como nuestra cantidad maxima puede variar y el gradient solo funcion de 0-1 , al normalizarlo "cambiamos" los valores a 0-1
     }
 }

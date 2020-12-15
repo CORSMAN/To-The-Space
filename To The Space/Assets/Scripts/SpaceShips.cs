@@ -33,13 +33,13 @@ public class SpaceShips : MonoBehaviour
             canRefuel = false;                                  //Lo volvemos falso
             if (consumingFuel)
             {
-
-                Debug.Log("Volando");
                 fuel -= fuel * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
                 barFuel.SetQuantity(fuel);
             }
         }
     }
+
+    
 
     /// <summary>
     /// Metodo que se encarga de hacer el repostaje

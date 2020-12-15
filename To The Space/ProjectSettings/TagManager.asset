@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - FirstPoint
   - Platform
+  - Base
   layers:
   - Default
   - TransparentFX

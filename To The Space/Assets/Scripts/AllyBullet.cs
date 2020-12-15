@@ -11,8 +11,13 @@ public class AllyBullet : MonoBehaviour
 
     private void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
+
         target = GameObject.FindGameObjectWithTag("Enemy").transform;
+        _rb = GetComponent<Rigidbody2D>();
+        if(target == null)
+        {
+            Destroy(gameObject);
+        }
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -29,6 +34,7 @@ public class AllyBullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")                              //Si colicionamos con la plataforma
         {
+            Destroy(collision.gameObject);
             Destroy(gameObject);
         }
     }
