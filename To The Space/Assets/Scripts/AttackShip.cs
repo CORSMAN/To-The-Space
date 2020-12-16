@@ -15,19 +15,23 @@ public class AttackShip : SpaceShips
     public float fireRate;//Flotante para comparar el tiempo de disparo
     public float rotateSpeed;
     public bool saveYou = false;
+    public bool isAttacking = true;
     public float contSaveYou = 3f;
+    Bars bars;
+    Bars bars2;
 
     // Start is called before the first frame update
     void Start()
     {
-        barFuselage = FindObjectOfType<Bars>();
-        barFuel = FindObjectOfType<Bars>();
-        barFuselage.SetQuantity(fuselageIntegrity);
+        enemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+        bars = barFuselage.GetComponent<Bars>();
+        bars2 = barFuel.GetComponent<Bars>();
+        bars.SetQuantity(fuselageIntegrity);
         maxFuel = fuel;
         fuselageMaxIntegrity = fuselageIntegrity;
-        barFuselage.SetMaxQuantity(fuselageMaxIntegrity);
-        barFuel.SetMaxQuantity(maxFuel);
-        barFuel.SetQuantity(fuel);
+        bars.SetMaxQuantity(fuselageMaxIntegrity);
+        bars2.SetMaxQuantity(maxFuel);
+        bars2.SetQuantity(fuel);
         currentGravity = tempGravity;
         _rb = this.GetComponent<Rigidbody2D>();
     }
@@ -35,8 +39,15 @@ public class AttackShip : SpaceShips
     // Update is called once per frame
     void Update()
     {
-        IsAttacking();
-        EnemyDetected();
+        if (fuselageIntegrity <= 0)
+        {
+            IsDead();
+        }
+
+        if (isAttacking)
+        {
+            IsAttacking();
+        }
         //Control del consumo y recarga de combustible
         #region
         if (canPressR && Input.GetKey(KeyCode.R))
@@ -83,11 +94,7 @@ public class AttackShip : SpaceShips
             transform.Translate(direction.normalized * distanceThisFrame, Space.World);
         }
     }
-
-    public void EnemyDetected()
-    {
-        
-    }
+    
 
     public void IsAttacking()
     {
@@ -97,7 +104,7 @@ public class AttackShip : SpaceShips
             saveYou = true;
         }
         _time += Time.deltaTime;
-        if (_time >= fireRate && amountMissiles > 0)
+        if (_time >= fireRate && amountMissiles > 0 && GameController.gc.allEnemies.Count > 0)
         {
             Instantiate(misil, instancePoint.position, Quaternion.identity);
             _time = 0;
@@ -117,10 +124,15 @@ public class AttackShip : SpaceShips
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Checkpoint")                                       //Si colicionamos con un checkpoint
+        if (collision.gameObject.tag == "EnemyBullet")
         {
-            //texto que indica que se ha alcanzado un nuevo checkpoint
+           TakingDamage(50);
         }
+    }
+
+    public override void TakingDamage(float damage)
+    {
+        base.TakingDamage(damage);
     }
 
     private void OnTriggerExit2D(Collider2D collision)

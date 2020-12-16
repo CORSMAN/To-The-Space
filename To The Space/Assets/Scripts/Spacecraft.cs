@@ -3,31 +3,51 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 public class Spacecraft : SpaceShips
 {
     GameController gameController;
-    
+    Camera cam;
+    public static Spacecraft sc;
+    Bars bars;
+    Bars bars2;
+    public bool enoughFuel = true;
+    public float gameOverCont = 3;
+    public bool gameOver = false;
 
     void Start()
     {
         gameController = FindObjectOfType<GameController>();
-        
-        LoadBySerilization();
+        cam = Camera.main;
         currentGravity = gravity;
+        bars = barFuselage.GetComponent<Bars>();
+        bars2 = barFuel.GetComponent<Bars>();
         maxFuel = fuel;
         fuselageMaxIntegrity = fuselageIntegrity;
-        barFuselage.SetQuantity(fuselageIntegrity);
-        barFuselage.SetMaxQuantity(fuselageMaxIntegrity);
-        barFuel.SetMaxQuantity(maxFuel);
-        barFuel.SetQuantity(fuel);
+        bars.SetQuantity(fuselageIntegrity);
+        bars.SetMaxQuantity(fuselageMaxIntegrity);
+        bars2.SetMaxQuantity(maxFuel);
+        bars2.SetQuantity(fuel);
     }
     
     void Update()
     {
+        if(fuel <= 1)
+        {
+            fuel = 0;
+            enoughFuel = false;
+        }
+        if(fuselageIntegrity <= 0)
+        {
+            IsDead();
+            GameController.gc.gameOver = true;
+        }
+
+        cam.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -10);//Codigo para que la camara siga al jugador
+
+        transform.position = new Vector3(Mathf.Clamp(transform.position.x, -7.31f, 7.66f), 
+            (transform.position.y), transform.position.z);//Limitamos la capacidad de movimiento lateral del jugador
+
         //Movimiento del jugador y recarga de combustible
         #region
         if (canPressR && Input.GetKey(KeyCode.R))
@@ -36,108 +56,62 @@ public class Spacecraft : SpaceShips
         }
 
         
-        transform.Translate(Vector3.down * currentGravity * Time.deltaTime);     //Con esta linea aplicamos gravedad
-        if (Input.GetKey(KeyCode.W))                                             //Si se mantiene presionada W la nave se mueve hacia arriba y consume combustible
-        {
+       
 
-            gameController.scoring = true;
-            transform.Translate(Vector3.up * speed * Time.deltaTime);
-            consumingFuel = true;
-            isFlying = true;
-            Fly();
-            if (gameController.currentDistance.position.y > gameController.tempDistance.position.y)
+        if (enoughFuel)
+        {
+            if (Input.GetKey(KeyCode.W))                                             //Si se mantiene presionada W la nave se mueve hacia arriba y consume combustible
             {
 
-                gameController.tempDistance.position = gameController.currentDistance.position;
+                if (gameController.currentDistance.position.y > gameController.tempDistance.position.y)
+                {
+
+                    gameController.scoring = true;
+                    gameController.tempDistance.position = gameController.currentDistance.position;
+                }
+                transform.Translate(Vector3.up * speed * Time.deltaTime);
+                consumingFuel = true;
+                isFlying = true;
+                Fly();
+            }
+            if (Input.GetKeyUp(KeyCode.W))
+            {
+                consumingFuel = false;                                               //Si se Suelta W la nave deja de consumir combustible
+                isFlying = false;
+
+                Falling();
+                Fly();
+            }
+
+        }
+
+        if (!gameOver)
+        {
+
+            if (Input.GetKey(KeyCode.A))                                             //Si se mantiene presionada A la nave se mueve hacia la izquierda
+            {
+                transform.Translate(Vector3.left * speed * Time.deltaTime);
+            }
+            if (Input.GetKey(KeyCode.D))                                             //Si se mantiene presionada D la nave se mueve hacia la derecha
+            {
+                transform.Translate(Vector3.right * speed * Time.deltaTime);
+            }
+
+            transform.Translate(Vector3.down * currentGravity * Time.deltaTime);     //Con esta linea aplicamos gravedad
+        }
+
+        if (!enoughFuel)
+        {
+            gameOverCont -= Time.deltaTime;
+            if(gameOverCont <= 0)
+            {
+                gameOver = true;
             }
         }
-        if (Input.GetKeyUp(KeyCode.W))
-        {
-            consumingFuel = false;                                               //Si se Suelta W la nave deja de consumir combustible
-            isFlying = false;
-            
-            Falling();
-            Fly();
-        }
-
-        if (Input.GetKey(KeyCode.A))                                             //Si se mantiene presionada A la nave se mueve hacia la izquierda
-        {
-            transform.Translate(Vector3.left * speed * Time.deltaTime); 
-        }
-        if (Input.GetKey(KeyCode.D))                                             //Si se mantiene presionada D la nave se mueve hacia la derecha
-        {
-            transform.Translate(Vector3.right * speed * Time.deltaTime);
-        }
         #endregion
-
-       
     }
 
-    private SaveSystem createSaveGameObject()
-    {
-        SaveSystem save = new SaveSystem();
-        save.score = GameController.gc.score;
-
-        save.playerPositionX = transform.position.x;
-        save.playerPositionY = transform.position.y;
-        save.tempDistanceY = GameController.gc.tempDistance.position.y;
-        save.tempDistanceX = GameController.gc.tempDistance.position.x;
-
-        //foreach(Enemies enemy in GameController.gc.allEnemies)
-        //{
-        //    save.isDead.Add(enemy.isDead);
-        //    save.enemyPositionX.Add(enemy.enemyPositionX);
-        //    save.enemyPositionY.Add(enemy.enemyPositionY);
-        //}
-        return save;
-    }
-
-    private void SaveBySerialization()
-    {
-        Debug.Log("Guardando");
-        SaveSystem save = createSaveGameObject();//Creamos un guardado con todos los datos
-        BinaryFormatter bf = new BinaryFormatter();
-        //FileStream fileStream = File.Create(Application.persistentDataPath + "/Data.txt");
-        FileStream fileStream = File.Create(Application.dataPath + "/Data.txt");
-        bf.Serialize(fileStream,save);
-        fileStream.Close();
-    }
-
-    private void LoadBySerilization()
-    {
-        if(File.Exists(Application.persistentDataPath + "/Data.txt"))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            //FileStream fileStream = File.Open(Application.persistentDataPath + "/Data.txt", FileMode.Open);
-            FileStream fileStream = File.Open(Application.dataPath + "/Data.txt", FileMode.Open);
-            SaveSystem save = bf.Deserialize(fileStream) as SaveSystem;
-            fileStream.Close();
-
-            GameController.gc.score = save.score;
-            transform.position = new Vector2(save.playerPositionX, save.playerPositionY);
-            GameController.gc.tempDistance.position = new Vector2 (save.tempDistanceX, save.tempDistanceY);
-            //for (int i = 0; i < save.isDead.Count; i++)
-            //{
-            //    if(GameController.gc.allEnemies[i] == null)
-            //    {
-            //        if (!save.isDead[i])//Si el enemigo esta muerto pero vivo antes que alcnazemos un checkpoint
-            //        {
-            //            float enemyPosX = save.enemyPositionX[i];
-            //            float enemyPosY = save.enemyPositionY[i];
-            //            Enemies newEnemy = Instantiate(GameController.gc.enemiesGameObject, new Vector2(enemyPosX, enemyPosY), Quaternion.identity);
-            //            GameController.gc.allEnemies[i] = newEnemy;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        float enemyPosX = save.enemyPositionX[i];
-            //        float enemyPosY = save.enemyPositionY[i];
-            //        GameController.gc.allEnemies[i].transform.position = new Vector2(enemyPosX,enemyPosY);
-            //    }
-            //}
-
-        }
-    }
+    
 
     protected void Falling()
     {
@@ -155,7 +129,11 @@ public class Spacecraft : SpaceShips
             
             //texto que indica que se ha alcanzado un nuevo checkpoint
         }
-        
+        if (collision.tag == "EnemyBullet")
+        {
+            TakingDamage(50);
+        }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -167,7 +145,7 @@ public class Spacecraft : SpaceShips
     {
         if (collision.gameObject.tag == "Platform")                              //Si colicionamos con la plataforma
         {
-            SaveBySerialization();
+            GameController.gc.SaveBySerialization();
             currentGravity = tempGravity;
             canRefuel = true;
             isFlying = false;
@@ -178,7 +156,7 @@ public class Spacecraft : SpaceShips
         if (collision.gameObject.tag == "Base")                              //Si colicionamos con la plataforma
         {
             Debug.Log("Estoy en la base");
-            SaveBySerialization();
+            GameController.gc.SaveBySerialization();
             currentGravity = tempGravity;
             currentGravity = tempGravity;
             canRefuel = true;
@@ -191,12 +169,20 @@ public class Spacecraft : SpaceShips
             collision.gameObject.SetActive(false);
             IsDead();
         }
+
+        if (collision.gameObject.tag == "EnemyBullet")
+        {
+            //Spacecraft.sc.TakingDamage(50);
+        }
     }
+
+
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Platform")
         {
+
             canRefuel = false;
             currentGravity = gravity;
 

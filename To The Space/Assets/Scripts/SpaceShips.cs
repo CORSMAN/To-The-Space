@@ -7,9 +7,9 @@ public class SpaceShips : MonoBehaviour
     //[SerializeField] protected GameObject ship;                              //GameObject que nos servira para el sprite de la nave
     [SerializeField] protected float fuel;                             //Combustible actual    
     [SerializeField] protected float maxFuel;                          //Combustible maximo
-    [SerializeField] protected int fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
-    [SerializeField] protected int fuselageMaxIntegrity;                     //Integridad maxima
-    [SerializeField] protected int motorTemperature;                         //Con esto controlaremos la temperatura del motor
+    [SerializeField] protected float fuselageIntegrity;                        //Integridad de la nave (puntos de salud)
+    [SerializeField] protected float fuselageMaxIntegrity;                     //Integridad maxima
+    [SerializeField] protected float motorTemperature;                         //Con esto controlaremos la temperatura del motor
     protected bool canRefuel;                               //Bool que nos servira para saber cuando puede recargar combustible
     protected bool isFlying;                                //Bool que nos servira para saber cuando esta volando
     protected bool canPressR;                               //Bool que nos servira para saber cuando se puede presionar la tecla R
@@ -19,8 +19,8 @@ public class SpaceShips : MonoBehaviour
 
     [SerializeField] protected float speed = 10;                                                          //Flotante para controlar la velocidad
     [SerializeField] protected float gravity = 2;                                                        //Flotante paara aplicar gravedad al momento de volar
-    [SerializeField] protected Bars barFuel;
-    [SerializeField] protected Bars barFuselage;
+    [SerializeField] protected GameObject barFuel;
+    [SerializeField] protected GameObject barFuselage;
 
     /// <summary>
     /// Metodo que nos ayudara a saber cuando la nave este volando
@@ -33,8 +33,8 @@ public class SpaceShips : MonoBehaviour
             canRefuel = false;                                  //Lo volvemos falso
             if (consumingFuel)
             {
-                fuel -= fuel * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
-                barFuel.SetQuantity(fuel);
+                fuel = fuel - 16f  * Time.deltaTime;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
+                barFuel.GetComponent<Bars>().SetQuantity(fuel);
             }
         }
     }
@@ -49,13 +49,14 @@ public class SpaceShips : MonoBehaviour
         if (canRefuel && fuel < maxFuel)                        //Si canrefuel es verdadero y el combustible es menor que el maximo, repostamos
         {
             fuel += fuel * Time.deltaTime;                      //Vamos incrementando la cantidad de combustible con el tiempo
-            barFuel.SetQuantity(fuel);
+            barFuel.GetComponent<Bars>().SetQuantity(fuel);
         }
     }
 
-    protected void IsLanding()
+    public virtual void TakingDamage(float damage)
     {
-        //comienza animacion de cohetes
+        fuselageIntegrity -= damage ;                      //Conforme pasa el tiempo, el combustible se va consumiendo, aqui nos encargamos de irlo reduciendo
+        barFuselage.GetComponent<Bars>().SetQuantity(fuselageIntegrity);
     }
 
     /// <summary>
