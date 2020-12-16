@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Explorer
   enemyNum: 10
-  enemyColor: {r: 0, g: 1, b: 0.96124196, a: 1}
-  fireRate: 2
+  enemyColor: {r: 1, g: 1, b: 1, a: 1}
   bullet: {fileID: 431898400825422345, guid: b99b014e70cf927449cf761279b3f187, type: 3}
   stopDistance: 8
   speed: 15
-  amountMissiles: 3

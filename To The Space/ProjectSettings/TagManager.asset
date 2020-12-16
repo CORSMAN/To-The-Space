@@ -9,6 +9,8 @@ TagManager:
   - FirstPoint
   - Platform
   - Base
+  - Ally
+  - EnemyBullet
   layers:
   - Default
   - TransparentFX

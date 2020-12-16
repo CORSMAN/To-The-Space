@@ -21,9 +21,17 @@ public class Enemies : MonoBehaviour
     public static Enemies enemies;
     private float _time = 0;//Flotante para controlar el tiempo y saber cuando disparar
 
+
+    public Transform target1;
+    public Transform target2;
+    public Transform currentTarget;
     // Start is called before the first frame update
     void Start()
     {
+
+        target1 = GameObject.FindGameObjectWithTag("Player").transform;
+        target2 = GameObject.FindGameObjectWithTag("Ally").transform;
+        enemySO.bullet.GetComponent<Bullet>().currentTarget = target2;
         _rb = this.GetComponent<Rigidbody2D>();
         myName.text = enemySO.enemyName;
         myNum.text = enemySO.enemyNum;
@@ -38,6 +46,10 @@ public class Enemies : MonoBehaviour
         
             Follow();
             Shooting();
+        if (target2 == null)
+        {
+            currentTarget = target1;
+        }
     }
 
     //Metodo para comenzar a seguir y ver al jugador
@@ -65,7 +77,7 @@ public class Enemies : MonoBehaviour
         _time += Time.deltaTime;
         if(_time >= fireRate  && amountMissiles > 0)
         {
-            Instantiate(enemySO.bullet, instancePoint.position, Quaternion.identity);
+            Instantiate(enemySO.bullet, instancePoint.position, transform.rotation);
             _time = 0;
             amountMissiles = amountMissiles - 1;    
         }

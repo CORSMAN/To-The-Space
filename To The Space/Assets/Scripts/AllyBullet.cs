@@ -11,17 +11,29 @@ public class AllyBullet : MonoBehaviour
 
     private void Start()
     {
-
         target = GameObject.FindGameObjectWithTag("Enemy").transform;
+
         _rb = GetComponent<Rigidbody2D>();
-        if(target == null)
+
+        if (target == null)
         {
-            Destroy(gameObject);
+            Debug.LogError("target null");
+
+
+            Destroy(this.gameObject);
+        }
+        if(_rb == null)
+        {
+            Debug.LogError("rb null");
         }
     }
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (target == null)
+        {
+            Destroy(gameObject);
+        }
         Vector2 direction = (Vector2)target.position - _rb.position;
         direction.Normalize();
         float rotateAmount = Vector3.Cross(direction, transform.up).z;
@@ -34,6 +46,9 @@ public class AllyBullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")                              //Si colicionamos con la plataforma
         {
+            // collision.gameObject.SetActive(false);
+
+            GameController.gc.allEnemies.Remove(collision.gameObject.GetComponent<Enemies>());
             Destroy(collision.gameObject);
             Destroy(gameObject);
         }
