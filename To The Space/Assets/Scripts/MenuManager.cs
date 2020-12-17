@@ -5,33 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void MainMenu()                      //Cuando hace click en el boton, cargamos la escena del menu principal
     {
-        
+        SceneManager.LoadScene(0);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void PlayButton()
+    public void PlayButton()                    //Cuando hace click en el boton, cargamos la escena del juego y le indicamos al GameController que es una nueva partida
     {
 
         GameController.isNewGame = true;
         SceneManager.LoadScene(1);
     }
 
-    public void LoadButton()
+    public void LoadButton()                    //Cuando hace click en el boton, cargamos la escena del juego y tambien le decimos a GameController que no es una nueva partidad
     {
         GameController.isNewGame = false;
 
         SceneManager.LoadScene(1);
     }
 
-    public void Exit()
+    public void Exit()                          //Cuando le da click al boton, se cierra el juego
     {
         Application.Quit();
     }

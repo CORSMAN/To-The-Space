@@ -6,14 +6,9 @@ using System.Collections.Generic;
 [System.Serializable]
 public class SaveSystem 
 {
-    public float score;
-    public float playerPositionX;
-    public float playerPositionY;
-    public float tempDistanceY;
-    public float tempDistanceX;
-
-    ////Listas para guardar las posiciones enemigas
-    //public List<float> enemyPositionX = new List<float>();
-    //public List<float> enemyPositionY = new List<float>();
-    //public List<bool> isDead = new List<bool>();
+    public float score;                     //Flotante para guardar la puntuacion
+    public float playerPositionX;           //Flotante para guardar la posicion del player en x
+    public float playerPositionY;           //Flotante para guardar la posicion del player en y
+    public float tempDistanceY;             //Flotante para guardar la posicion en y que se utilizara cuando sea una nueva partida
+    public float tempDistanceX;             //Flotante para guardar la posicion en x que se utilizara cuando sea una nueva partida
 }

@@ -5,29 +5,26 @@ using UnityEngine.SceneManagement;
 
 public class Goal : MonoBehaviour
 {
-    public GameObject go;
-    private float _time;
+    public GameObject win;                                                          //GameObject que nos ayudara a controlar cuando activar el mensaje de que has ganado
+    Spacecraft spaceCraft;                                                          //Variable para modificar datos de SpaceCRaft
+    GameController gameController;                                                  //Variable para modificar datos de GameController
     // Start is called before the first frame update
     void Start()
     {
-
+        spaceCraft = FindObjectOfType<Spacecraft>();                                //Buscamos y obtenemos todos sus componentes
+        gameController = FindObjectOfType<GameController>();                        //Buscamos y obtenemos todos sus componentes
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D col)                                   //Detectamos colisiones
     {
-        
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        go.gameObject.SetActive(true);
 
-        _time += Time.deltaTime;
-        if (_time >= 2)
+        if (col.gameObject.tag == "Player")                                         //Si colisiona con el player modificamos todos estos datos 
         {
-
-            SceneManager.LoadScene(0);
-            _time = 0;
+            spaceCraft.enoughFuel = false;
+            spaceCraft.gameOver = true;
+            spaceCraft.win = true;
+            gameController.scoring = false;
+            win.gameObject.SetActive(true);
         }
     }
 }
