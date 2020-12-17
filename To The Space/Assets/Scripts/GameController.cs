@@ -10,34 +10,26 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class GameController : MonoBehaviour
 {
+    public GameObject spaceCraft;                                                          //GameObject que nos ayudara a obtener las posiciones del jugador y poder guardarla en otro metodo
+    public GameObject loseFuselage;                                                        //GameObject que nos ayudara mostrar el mensaje que ha perdido por falta de combustible
 
+    public static bool isNewGame = true;                                                   //Bool para saber cuando es un nuevo juego y cargarle datos predefinidos
+    public Transform initialDistance;                                                      //Transform para guardar la posicion del jugador, nos servira para hacer una comparacion mas a delante y asi saber si se suman puntos o no
+    public Transform currentDistance;                                                      //Transform para ir guardando la distancia y comparar 
+    public Transform tempDistance;                                                         //Transform para ir guardar la distancia temporal
+    public float score = 0;                                                                //Flotante para controlar la puntuacion
+    public List<Enemies> allEnemies = new List<Enemies>();                                 //Lista que alamcena todos los enemigos para llevar un control de estos y evitar errores con los misiles
+    public bool gameOver = false;                                                          //Bool para saber cuando el jugador ha perdido
 
-    public static GameController gc;
-    public GameObject spaceCraft;
-
-    public static bool isNewGame = true;
-    public Transform initialDistance;//Transform para guardar la posicion del jugador, nos servira para hacer una comparacion mas a delante y asi saber si se suman puntos o no
-    public Transform currentDistance;//Transform para ir guardando la distancia y comparar 
-    public Transform tempDistance;
-    public float scoreTime;//Flotante para controlar cada que tiempo se le sumara un punto al jugador
-    public float score = 0;
-    public string scoreString = "Score:" + "Mts.";
-    public List<Enemies> allEnemies = new List<Enemies>();
-    public Enemies enemiesGameObject;
-    public bool gameOver = false;
-
-    public Text txtScore;
-    public bool scoring = false;
-
-    private void Awake()
-    {
-        gc = this;
-    }
+    public Text txtScore;                                                                  //Text para obtener los componentes del text dentro del juego y asi poder modificarlos
+    public bool scoring = false;                                                           //Bool para controlar cuando el jugadpor pueder puntuar o no
+        
     void Start()
     {
         SaveSystem saveSystem = new SaveSystem();
-        
-        if (isNewGame)
+
+        //Si es un juego nuevo le pasamos estos valores
+        if (isNewGame)                                                                     
         {
             saveSystem.score = 0;
             saveSystem.playerPositionX = 0;
@@ -45,39 +37,46 @@ public class GameController : MonoBehaviour
             saveSystem.tempDistanceY = -3.219f;
             saveSystem.tempDistanceX = 0;
         }
+        //Sino Cargamos la partida previamente guardada
         else
         {
             LoadBySerilization();
         }
-        txtScore.text = scoreString + score.ToString("F1") + "Mts.";
-        initialDistance.position = currentDistance.position;
+
+        txtScore.text = "Score:" +  score.ToString("F1") + "Mts.";                           //Al iniciar el juego mostramos el texto de puntuacion con estos valores
+        initialDistance.position = currentDistance.position;                                 //Igualamos la distancia inicial a la actual
     }
 
     // Update is called once per frame
+    
     void Update()
     {
+        //Si podemos puntuar y la distancia inicial es mayor que la actual entonces sumamos puntos
         if (scoring && initialDistance.transform.position.y < currentDistance.transform.position.y)
         {
             score += Time.deltaTime;
-            txtScore.text = scoreString + score.ToString("F1") + "Mts.";
+            txtScore.text = "Score:"  + score.ToString("F1") + "Mts.";
         }
+        //Si gameOver es verdader, mostramos el mensaje de que se ha perdido
         if (gameOver)
         {
-
+            loseFuselage.gameObject.SetActive(true);
         }
     }
+    //Metodo para almacenar los datos que queremos guardar(aqui se deven agregar todos aquellos datos que queremos guardar
     public SaveSystem createSaveGameObject()
     {
         SaveSystem save = new SaveSystem();
-        save.score = GameController.gc.score;
+        save.score = score;
 
         save.playerPositionX = spaceCraft.transform.position.x;
         save.playerPositionY = spaceCraft.transform.position.y;
-        save.tempDistanceY = GameController.gc.tempDistance.position.y;
-        save.tempDistanceX = GameController.gc.tempDistance.position.x;
+        save.tempDistanceY = tempDistance.position.y;
+        save.tempDistanceX = tempDistance.position.x;
         return save;
     }
 
+    //Metodo para hacer el guardado de datos
     public void SaveBySerialization()
     {
         Debug.Log("Guardando");
@@ -89,6 +88,7 @@ public class GameController : MonoBehaviour
         fileStream.Close();
     }
 
+    //Metodo para hacer la carga de datos
     public void LoadBySerilization()
     {
         if (File.Exists(Application.persistentDataPath + "/Data.txt"))
@@ -101,9 +101,9 @@ public class GameController : MonoBehaviour
             SaveSystem save = bf.Deserialize(fileStream) as SaveSystem;
             fileStream.Close();
 
-            GameController.gc.score = save.score;
+            score = save.score;
             spaceCraft.transform.position = new Vector2(save.playerPositionX, save.playerPositionY);
-            GameController.gc.tempDistance.position = new Vector2(save.tempDistanceX, save.tempDistanceY);
+            tempDistance.position = new Vector2(save.tempDistanceX, save.tempDistanceY);
 
         }
     }
