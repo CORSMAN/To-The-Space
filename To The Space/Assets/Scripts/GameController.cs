@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
 {
     public GameObject spaceCraft;                                                          //GameObject que nos ayudara a obtener las posiciones del jugador y poder guardarla en otro metodo
     public GameObject loseFuselage;                                                        //GameObject que nos ayudara mostrar el mensaje que ha perdido por falta de combustible
+    public GameObject controlsImage;                                                       //GameObject que nospermitira enseñar y quitar las instrucciones.
 
     public static bool isNewGame = true;                                                   //Bool para saber cuando es un nuevo juego y cargarle datos predefinidos
     public Transform initialDistance;                                                      //Transform para guardar la posicion del jugador, nos servira para hacer una comparacion mas a delante y asi saber si se suman puntos o no
@@ -20,6 +21,7 @@ public class GameController : MonoBehaviour
     public float score = 0;                                                                //Flotante para controlar la puntuacion
     public List<Enemies> allEnemies = new List<Enemies>();                                 //Lista que alamcena todos los enemigos para llevar un control de estos y evitar errores con los misiles
     public bool gameOver = false;                                                          //Bool para saber cuando el jugador ha perdido
+    public float showImg = 0;                                                              //Flotante para controlar en que tiempo desaparecera la instruccion
 
     public Text txtScore;                                                                  //Text para obtener los componentes del text dentro del juego y asi poder modificarlos
     public bool scoring = false;                                                           //Bool para controlar cuando el jugadpor pueder puntuar o no
@@ -62,6 +64,25 @@ public class GameController : MonoBehaviour
         {
             loseFuselage.gameObject.SetActive(true);
         }
+        //Si controlsImg es verdadero, comenzamos a restarle a showImg hasta que se vuelve cero y desactivamos las instrucciones 
+        if (isNewGame)
+        {
+            controlsImage.gameObject.SetActive(true);
+            Debug.Log("controls img true");
+            showImg += Time.deltaTime;
+            Debug.Log(showImg);
+            if(showImg >= 7)
+            {
+                controlsImage.gameObject.SetActive(false);
+                showImg = 0;
+                Debug.Log("falso");
+                isNewGame = false;
+            }
+        }
+        else
+        {
+            controlsImage.gameObject.SetActive(false);
+        }
     }
     //Metodo para almacenar los datos que queremos guardar(aqui se deven agregar todos aquellos datos que queremos guardar
     public SaveSystem createSaveGameObject()
@@ -79,7 +100,6 @@ public class GameController : MonoBehaviour
     //Metodo para hacer el guardado de datos
     public void SaveBySerialization()
     {
-        Debug.Log("Guardando");
         SaveSystem save = createSaveGameObject();//Creamos un guardado con todos los datos
         BinaryFormatter bf = new BinaryFormatter();
         //FileStream fileStream = File.Create(Application.persistentDataPath + "/Data.txt");

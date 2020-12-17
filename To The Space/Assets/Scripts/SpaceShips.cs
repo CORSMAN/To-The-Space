@@ -8,7 +8,6 @@ public class SpaceShips : MonoBehaviour
     [SerializeField] protected float maxFuel;                                                               //Combustible maximo
     [SerializeField] protected float fuselageIntegrity;                                                     //Integridad de la nave (puntos de salud)
     [SerializeField] protected float fuselageMaxIntegrity;                                                  //Integridad maxima
-    [SerializeField] protected float motorTemperature;                                                      //Con esto controlaremos la temperatura del motor
     protected bool canRefuel;                                                                               //Bool que nos servira para saber cuando puede recargar combustible
     protected bool isFlying;                                                                                //Bool que nos servira para saber cuando esta volando
     protected bool canPressR;                                                                               //Bool que nos servira para saber cuando se puede presionar la tecla R
