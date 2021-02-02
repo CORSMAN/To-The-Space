@@ -11,6 +11,8 @@ public class AttackShip : SpaceShips
     public Transform enemy;                                                         //Transform para obtener la posicion del enemigo
     private Rigidbody2D _rb;                                                        //Rigidbody que nos servira para poder rotar a la nave
     private float _time;                                                            //Flotante para controlar el tiempo y saber cuadno disparar
+    private GameObject _enemiesAmount;                                              //GameObject para acceder al numero de hijos del padre de enemies
+    public int _numEnemies;                                                         //Entero que nos servira para almacenar al numero de hijos que tiene la clase padre de enemigos
     public float fireRate;                                                          //Flotante para comparar el tiempo de disparo
     public float rotateSpeed;                                                       //Velocidad de rotacion
     public bool saveYou = false;                                                    //Bool para controlar cuando la nave se convertira en kamikaze para salvar al jugador
@@ -25,6 +27,7 @@ public class AttackShip : SpaceShips
         #region Obtenemos y Asignamos  valroes
         gameController = FindObjectOfType<GameController>();
         enemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+        _enemiesAmount = GameObject.Find("Enemies");
         bars = barFuselage.GetComponent<Bars>();
         bars2 = barFuel.GetComponent<Bars>();
         bars.SetQuantity(fuselageIntegrity);
@@ -35,11 +38,22 @@ public class AttackShip : SpaceShips
         bars2.SetQuantity(fuel);
         currentGravity = tempGravity;
         _rb = this.GetComponent<Rigidbody2D>();
+         _numEnemies = _enemiesAmount.transform.childCount;
+        Debug.Log(_numEnemies);
         #endregion
     }
     
     void Update()
     {
+        Debug.Log(_numEnemies);
+        if (_numEnemies > 0)
+        {
+            enemy = GameObject.FindGameObjectWithTag("Enemy").transform;
+        }
+        else
+        {
+            enemy = null;
+        }
         if (fuselageIntegrity <= 0)                                                  //Si la integridad(HP) llega a cero, llamamos al metodo IsDead
         {
             IsDead();
@@ -102,7 +116,7 @@ public class AttackShip : SpaceShips
 
         _time += Time.deltaTime;                                                                        //Incrementamos el tiepo
 
-        if (_time >= fireRate && amountMissiles > 0 && gameController.allEnemies.Count > 0)             //Si el tiempo es mayor que la cadencia de tiro o igual que fireRate y la cantidad de misiles es mayor a y la lista de enemigos de gamecontroller es mayor a 0
+        if (_time >= fireRate && amountMissiles > 0 && gameController.allEnemies.Count > 0 && enemy != null)             //Si el tiempo es mayor que la cadencia de tiro o igual que fireRate y la cantidad de misiles es mayor a y la lista de enemigos de gamecontroller es mayor a 0
         {
             Instantiate(misil, instancePoint.position, Quaternion.identity);                            //Instanciamos los misiles en la posicion indicada y con su reséctiva rotacion
             _time = 0;                                                                                  //Reiniciamos el tiempo

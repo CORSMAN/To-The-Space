@@ -10,10 +10,11 @@ public class AllyBullet : MonoBehaviour
     private Rigidbody2D _rb;                                                        //Usaremos este rigidboy para hacer el giro del misil
     public float speed = 0.1f;                                                      //Velocidad a la cual se movera el misil
     public float rotateSpeed = 200;                                                 //Velocidad a la cual girara el misil
+    private AttackShip _attackShip;                                                 //Creamos una variable del tipo Attakship para poder controlar el contador de enemigos y saber si buscaremos a un nuevo objetivo o no
 
     private void Start()
     {
-
+        _attackShip = FindObjectOfType<AttackShip>();
         gameController = FindObjectOfType<GameController>();                        //Buscamos y obtenemos los componentes de GameController
         target = GameObject.FindGameObjectWithTag("Enemy").transform;               //Obtenemos la posicion del objetivo
 
@@ -31,11 +32,14 @@ public class AllyBullet : MonoBehaviour
         {
             Destroy(this.gameObject);                                               //Destruimos al misil
         }
-        Vector2 direction = (Vector2)target.position - _rb.position;                //Obtenemos distancia
-        direction.Normalize();                                                      //Normalizamos distancia
-        float rotateAmount = Vector3.Cross(direction, transform.up).z;              //Obtenemos que tanto va a rotar el misil
-        _rb.angularVelocity = -rotateAmount * rotateSpeed;                          //Cuantos grados por segundo rotara (lo hacemos negativo ya que de lo contrario el misil se dirige a la direccion contraria del objetivo
-        _rb.velocity = transform.up * speed;                                        //Obtenemos una velocidad lineal
+        else
+        {
+            Vector2 direction = (Vector2)target.position - _rb.position;                //Obtenemos distancia
+            direction.Normalize();                                                      //Normalizamos distancia
+            float rotateAmount = Vector3.Cross(direction, transform.up).z;              //Obtenemos que tanto va a rotar el misil
+            _rb.angularVelocity = -rotateAmount * rotateSpeed;                          //Cuantos grados por segundo rotara (lo hacemos negativo ya que de lo contrario el misil se dirige a la direccion contraria del objetivo
+            _rb.velocity = transform.up * speed;                                        //Obtenemos una velocidad lineal
+        }
 
     }
 
@@ -44,6 +48,7 @@ public class AllyBullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy")                                    //Si colicionamos con la plataforma
         {
+            _attackShip._numEnemies--;
             gameController.allEnemies.Remove(collision.gameObject.GetComponent<Enemies>()); //Removemos al enemigo de la lista
             Destroy(collision.gameObject);                                          //Destruimos al objetivo
             Destroy(this.gameObject);                                               //Destruimos al misil
