@@ -68,14 +68,11 @@ public class GameController : MonoBehaviour
         if (isNewGame)
         {
             controlsImage.gameObject.SetActive(true);
-            Debug.Log("controls img true");
             showImg += Time.deltaTime;
-            Debug.Log(showImg);
             if(showImg >= 7)
             {
                 controlsImage.gameObject.SetActive(false);
                 showImg = 0;
-                Debug.Log("falso");
                 isNewGame = false;
             }
         }
