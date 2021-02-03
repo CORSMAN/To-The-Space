@@ -53,6 +53,7 @@ public class GameController : MonoBehaviour
     
     void Update()
     {
+        Debug.Log(allEnemies.Count);
         //Si podemos puntuar y la distancia inicial es mayor que la actual entonces sumamos puntos
         if (scoring && initialDistance.transform.position.y < currentDistance.transform.position.y)
         {

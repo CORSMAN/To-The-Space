@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class Enemies : MonoBehaviour
 {
-    public Transform player;                                                        //Transform para obtener la posicion del player y asi poder seguirlo
     public Transform instancePoint;                                                 //Transform que nos servira para instanciar la bala
     private Rigidbody2D _rb;                                                        //Rigidbody que nos servira para la rotacion 
     public Text myName;                                                             //Nombre    
@@ -30,6 +29,7 @@ public class Enemies : MonoBehaviour
         myName.text = enemySO.enemyName;
         myNum.text = enemySO.enemyNum;
         GetComponent<SpriteRenderer>().color = enemySO.enemyColor;
+        currentTarget = target2;
         #endregion
     }
 
@@ -46,17 +46,17 @@ public class Enemies : MonoBehaviour
     #region Metodo para comenzar a seguir y ver al jugador
     void Follow()
     {   
-        if (player != null)                                                         //Si el player es diferente de nulo
+        if (currentTarget != null)                                                         //Si el player es diferente de nulo
         {
-            if (Vector2.Distance(transform.position, player.position) > enemySO.stopDistance)                                    //Obtenemos la distancia y si esta es mayor a la distancia para detenrse dada por enemySO      
+            if (Vector2.Distance(transform.position, currentTarget.position) > enemySO.stopDistance)                                    //Obtenemos la distancia y si esta es mayor a la distancia para detenrse dada por enemySO      
             {
-                transform.position = Vector2.MoveTowards(transform.position, player.position, enemySO.speed * Time.deltaTime);   //Le decimos que se mueva de la velocidad actual a la del player a la velocidad dada por enemySO
+                transform.position = Vector2.MoveTowards(transform.position, currentTarget.position, enemySO.speed * Time.deltaTime);   //Le decimos que se mueva de la velocidad actual a la del player a la velocidad dada por enemySO
             }
-            if (Vector2.Distance(transform.position, player.position) < enemySO.stopDistance)                                    //Obtenemos la distancia y si esta es menor a la distancia para detenrse dada por enemySO 
+            if (Vector2.Distance(transform.position, currentTarget.position) < enemySO.stopDistance)                                    //Obtenemos la distancia y si esta es menor a la distancia para detenrse dada por enemySO 
             {
-                transform.position = Vector2.MoveTowards(transform.position, player.position, -enemySO.speed * Time.deltaTime);  //Le decimos que retroceda a la velocidad dada por enemySO
+                transform.position = Vector2.MoveTowards(transform.position, currentTarget.position, -enemySO.speed * Time.deltaTime);  //Le decimos que retroceda a la velocidad dada por enemySO
             }
-            Vector3 direction = player.position - transform.position;                                                            //Obtenemos la distancia
+            Vector3 direction = currentTarget.position - transform.position;                                                            //Obtenemos la distancia
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;                                                 //Obtenemos el angulo entre Y y X y lo convertimos en grados 
             _rb.rotation = angle;                                                                                                //Le damos la rotacion
 
