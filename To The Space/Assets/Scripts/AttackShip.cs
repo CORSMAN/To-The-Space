@@ -39,13 +39,11 @@ public class AttackShip : SpaceShips
         currentGravity = tempGravity;
         _rb = this.GetComponent<Rigidbody2D>();
          _numEnemies = _enemiesAmount.transform.childCount;
-        Debug.Log(_numEnemies);
         #endregion
     }
     
     void Update()
     {
-        Debug.Log(_numEnemies);
         if (_numEnemies > 0)
         {
             enemy = GameObject.FindGameObjectWithTag("Enemy").transform;
